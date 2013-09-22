@@ -144,17 +144,17 @@ retry :
    recordHeader._size = recordSize + sizeof( dmsRecord ) ;
    recordHeader._flag = DMS_RECORD_FLAG_NORMAL ;
    // copy the slot
-   if ( DMS_REUSER_SLOT_EMPTY ==  pageHeader->_reuseSlotOffset )
+   if ( DMS_REUSE_SLOT_EMPTY ==  pageHeader->_reuseSlotOffset )
    {
       *(SLOTOFF*)( page + sizeof(dmsPageHeader) +
                    pageHeader->_numSlots * sizeof(SLOTOFF) ) = offsetTemp ;
    } else
    {
-      reuseSlot = pageHeader->_reuserSlotOffset ;
-      pageHeader->_reuserSlotOffset = *(SLOTOFF*)( page + sizeof(dmsPageHeader) +
+      reuseSlot = pageHeader->_reuseSlotOffset ;
+      pageHeader->_reuseSlotOffset = *(SLOTOFF*)( page + sizeof(dmsPageHeader) +
                                         pageHeader->_reuseSlotOffset * sizeof(SLOTOFF)  ) ;
       *(SLOTOFF*)( page + sizeof(dmsPageHeader) + reuseSlot * sizeof(SLOTOFF) ) = offsetTemp ;
-      isReuseSlot = true ;
+      isReusedSlot = true ;
    }     
  // copy the record header
    memcpy ( page + offsetTemp, (char*)&recordHeader, sizeof(dmsRecord) ) ;
@@ -164,11 +164,13 @@ retry :
             recordSize ) ;
    outRecord  = BSONObj ( page + offsetTemp + sizeof(dmsRecord) ) ;
    rid._pageID = pageID ;
-   rid._slotID = isReuseSlot ? reuserSlot : pageHeader->_numSlots ;
+   rid._slotID = isReusedSlot ? reuseSlot : pageHeader->_numSlots ;
    // modify metadata in page
-   if ( !isReuseSlot )
+   if ( !isReusedSlot )
+   {
       pageHeader->_numSlots ++ ;
       pageHeader->_slotOffset += sizeof(SLOTID) ;
+   }
    pageHeader->_freeOffset = offsetTemp ;
    // modify database metadata
    _updateFreeSpace ( pageHeader,
@@ -240,17 +242,20 @@ int dmsFile::find ( dmsRecordID &rid, BSONObj &result )
    dmsRecord *recordHeader= NULL ;
    dmsPageHeader *pageHeader  = NULL ;
 
-   pageHeader = (dmsPageHeader *)page ;   
    // S lock the database
    _mutex.get_shared () ;
    // goto the page and verify the slot is valid 
    page = pageToOffset ( rid._pageID ) ;
+
    if ( !page )
    {
       rc = EDB_SYS ;
       PD_LOG ( PDERROR, "Failed to find the page" ) ;
       goto error ;
    }
+
+   pageHeader = (dmsPageHeader *)page ;
+
    rc = _searchSlot ( page, rid, slot ) ;
    if ( rc ) 
    {
@@ -258,7 +263,7 @@ int dmsFile::find ( dmsRecordID &rid, BSONObj &result )
       goto error ;
    }
    // if slot is empty , something big wrong
-   if ( DMS_SLOT_EMPTY == slot || page->_numSlots > slot )
+   if ( DMS_SLOT_EMPTY == slot ||  pageHeader->_numSlots > slot )
    {
       rc = EDB_SYS ;
       PD_LOG ( PDERROR, "The record is dropped" ) ;
@@ -552,7 +557,7 @@ void dmsFile::_recoverSpace ( char *page )
    bool isRecover            = false ;
    dmsRecord *recordHeader   = NULL ;   
    dmsPageHeader *pageHeader = NULL ;
-   slotTemp                  = 0 ;
+   int slotTemp                  = 0 ;
    pLeft = page + sizeof(dmsPageHeader) ;
    pRight = page + DMS_PAGESIZE ;
 
