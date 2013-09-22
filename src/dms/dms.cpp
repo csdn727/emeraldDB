@@ -498,11 +498,11 @@ int dmsFile::_loadData ()
 {
    int rc                    = EDB_OK ;
    int numPage               = 0 ;
-   int numSegments            = 0 ;
+   int numSegments           = 0 ;
    dmsPageHeader *pageHeader = NULL ;
    char *data                = NULL ;
-   SLOTID slotID             = 0 ;
    dmsRecordID recordID ;
+   SLOTID slotID             = 0;
    BSONObj bson ;
 
    // check if header is valid
@@ -548,6 +548,8 @@ error :
    goto done ;
 }
 
+void Qsort(SLOTID  myArray[], SLOTID  min,SLOTID  max) ;
+
 void dmsFile::_recoverSpace ( char *page )
 {
    char *pLeft               = NULL ;
@@ -557,33 +559,82 @@ void dmsFile::_recoverSpace ( char *page )
    bool isRecover            = false ;
    dmsRecord *recordHeader   = NULL ;   
    dmsPageHeader *pageHeader = NULL ;
-   int slotTemp                  = 0 ;
+   SLOTOFF slotTemp           = 0 ;
    pLeft = page + sizeof(dmsPageHeader) ;
    pRight = page + DMS_PAGESIZE ;
 
    pageHeader = (dmsPageHeader *)page ;
-   // recover space
+   
+   // the slots order by data space, from the page end 
+   SLOTID slotOrder[pageHeader->_numSlots] ;
+   
    for ( unsigned int i = 0; i < pageHeader->_numSlots; ++i )
    {
-      slot = *(( SLOTOFF* )(pLeft + sizeof(SLOTOFF) * i ) ) ;
-      if ( DMS_SLOT_EMPTY != slot )
-      {
-         recordHeader = (dmsRecord *)(page + slot ) ;
-         recordSize = recordHeader->_size ;
-         pRight -= recordSize ;
-         if ( isRecover )
-         {
-            memmove ( pRight, page + slot, recordSize ) ;
-         }
-      }
-      else
+      slotOrder[i] = *(SLOTID*)( page + sizeof( dmsPageHeader ) +
+                                  i * sizeof(SLOTID) ) ;
+      if ( DMS_SLOT_EMPTY == slotOrder[i] )
       {
          slotTemp = pageHeader->_reuseSlotOffset ;
-         pageHeader->_reuseSlotOffset = i ;
-         slot = slotTemp ;
+         pageHeader->_reuseSlotOffset = slotOrder[i] ;
+         *(SLOTID*)( page + sizeof( dmsPageHeader ) +
+                                  i * sizeof(SLOTID) ) = slotTemp ;
+         slotOrder[i] = 0 ;
+      } else if ( pageHeader->_numSlots > slotOrder[i] ||
+                  DMS_REUSE_SLOT_EMPTY == slotOrder[i] )
+      {
+         slotOrder[i] = 0 ;
+      }
+       
+   }
+   Qsort( slotOrder, 0, pageHeader->_numSlots ) ;
+   // recover space
+   for ( unsigned int i =  pageHeader->_numSlots; i >=0 && slotOrder[i] > 0 ; --i )
+   {
+      slot = slotOrder[i] ;
+      recordHeader = (dmsRecord *)(page + slot ) ;
+      recordSize = recordHeader->_size ;
+      pRight -= recordSize ;
+      if ( isRecover )
+      {
+         memmove ( pRight, page + slot, recordSize ) ;
+      }
+      else if (  pRight - page - slot > 0 )
+      {
          isRecover = true ;
       }
+      
    }
    pageHeader->_freeOffset = pRight - page ;
 
 }
+
+void Qsort(SLOTID  myArray[], SLOTID  min, SLOTID  max)
+{
+    SLOTID  pivot = myArray[(min + max) / 2];
+
+    SLOTID  left = min, right = max;
+
+    while (left < right) {
+        while (myArray[left] < pivot) {
+            left++;
+        }
+        while (myArray[right] > pivot) {
+            right--;
+        }
+
+        if (left <= right) {
+            SLOTID  temp = myArray[left];
+            myArray[left] = myArray[right];
+            myArray[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
+    if (min < right) {
+        Qsort(myArray, min, right);
+    }
+    if (left < max) {
+        Qsort(myArray, left, max);
+    }
+} 
