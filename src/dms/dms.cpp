@@ -20,10 +20,11 @@ using namespace bson ;
 
 const char *gKeyFieldName = DMS_KEY_FIELDNAME ;
 
-dmsFile::dmsFile () :
+dmsFile::dmsFile (  ixmBucketManager   *ixmBucketMgr ) :
 _header(NULL),
 _pFileName(NULL)
 {
+   _ixmBucketMgr = ixmBucketMgr ;
 }
 
 dmsFile::~dmsFile ()
@@ -45,8 +46,7 @@ int dmsFile::insert ( BSONObj &record, BSONObj &outRecord, dmsRecordID &rid )
    SLOTOFF offsetTemp         = 0 ;
    const char *pGKeyFieldName = NULL ;
    dmsRecord recordHeader ;
-   bool isReusedSlot          = false ;
-   SLOTOFF reuseSlot          = 0 ;
+
    recordSize                 = record.objsize() ;
 
    // when we attempt to insert record, first we have to verify it include _id field
@@ -144,19 +144,9 @@ retry :
    recordHeader._size = recordSize + sizeof( dmsRecord ) ;
    recordHeader._flag = DMS_RECORD_FLAG_NORMAL ;
    // copy the slot
-   if ( DMS_REUSE_SLOT_EMPTY ==  pageHeader->_reuseSlotOffset )
-   {
-      *(SLOTOFF*)( page + sizeof(dmsPageHeader) +
-                   pageHeader->_numSlots * sizeof(SLOTOFF) ) = offsetTemp ;
-   } else
-   {
-      reuseSlot = pageHeader->_reuseSlotOffset ;
-      pageHeader->_reuseSlotOffset = *(SLOTOFF*)( page + sizeof(dmsPageHeader) +
-                                        pageHeader->_reuseSlotOffset * sizeof(SLOTOFF)  ) ;
-      *(SLOTOFF*)( page + sizeof(dmsPageHeader) + reuseSlot * sizeof(SLOTOFF) ) = offsetTemp ;
-      isReusedSlot = true ;
-   }     
- // copy the record header
+   *(SLOTOFF*)( page + sizeof(dmsPageHeader) +
+                pageHeader->_numSlots * sizeof(SLOTOFF) ) = offsetTemp ;
+   // copy the record header
    memcpy ( page + offsetTemp, (char*)&recordHeader, sizeof(dmsRecord) ) ;
    // copy the record body
    memcpy ( page + offsetTemp + sizeof(dmsRecord),
@@ -164,13 +154,10 @@ retry :
             recordSize ) ;
    outRecord  = BSONObj ( page + offsetTemp + sizeof(dmsRecord) ) ;
    rid._pageID = pageID ;
-   rid._slotID = isReusedSlot ? reuseSlot : pageHeader->_numSlots ;
+   rid._slotID = pageHeader->_numSlots ;
    // modify metadata in page
-   if ( !isReusedSlot )
-   {
-      pageHeader->_numSlots ++ ;
-      pageHeader->_slotOffset += sizeof(SLOTID) ;
-   }
+   pageHeader->_numSlots ++ ;
+   pageHeader->_slotOffset += sizeof(SLOTID) ;
    pageHeader->_freeOffset = offsetTemp ;
    // modify database metadata
    _updateFreeSpace ( pageHeader,
@@ -240,22 +227,16 @@ int dmsFile::find ( dmsRecordID &rid, BSONObj &result )
    SLOTID slot            = 0 ;
    char *page             = NULL ;
    dmsRecord *recordHeader= NULL ;
-   dmsPageHeader *pageHeader  = NULL ;
-
    // S lock the database
    _mutex.get_shared () ;
    // goto the page and verify the slot is valid 
    page = pageToOffset ( rid._pageID ) ;
-
    if ( !page )
    {
       rc = EDB_SYS ;
       PD_LOG ( PDERROR, "Failed to find the page" ) ;
       goto error ;
    }
-
-   pageHeader = (dmsPageHeader *)page ;
-
    rc = _searchSlot ( page, rid, slot ) ;
    if ( rc ) 
    {
@@ -263,7 +244,7 @@ int dmsFile::find ( dmsRecordID &rid, BSONObj &result )
       goto error ;
    }
    // if slot is empty , something big wrong
-   if ( DMS_SLOT_EMPTY == slot ||  pageHeader->_numSlots > slot )
+   if ( DMS_SLOT_EMPTY == slot )
    {
       rc = EDB_SYS ;
       PD_LOG ( PDERROR, "The record is dropped" ) ;
@@ -379,7 +360,6 @@ int dmsFile::_extendSegment ()
    pageHeader._slotOffset = sizeof ( dmsPageHeader ) ;
    pageHeader._freeSpace = DMS_PAGESIZE - sizeof(dmsPageHeader) ;
    pageHeader._freeOffset = DMS_PAGESIZE ;
-   pageHeader._reuseSlotOffset = DMS_REUSE_SLOT_EMPTY ;
    // copy header to each page
    for ( int i = 0; i < DMS_FILE_SEGMENT_SIZE; i+= DMS_PAGESIZE )
    {
@@ -498,11 +478,12 @@ int dmsFile::_loadData ()
 {
    int rc                    = EDB_OK ;
    int numPage               = 0 ;
-   int numSegments           = 0 ;
+   int numSegments            = 0 ;
    dmsPageHeader *pageHeader = NULL ;
    char *data                = NULL ;
+   SLOTID slotID             = 0 ;
+   SLOTOFF slotOffset        = 0 ;
    dmsRecordID recordID ;
-   SLOTID slotID             = 0;
    BSONObj bson ;
 
    // check if header is valid
@@ -539,6 +520,24 @@ int dmsFile::_loadData ()
             slotID = ( SLOTID ) pageHeader->_numSlots ;
             recordID._pageID = (PAGEID) k ;
             // for each record in the page, let's insert into index
+            for ( unsigned int s = 0; s < slotID; ++s )
+            {
+               slotOffset = *(SLOTOFF*)(data+k*DMS_PAGESIZE +
+                         sizeof(dmsPageHeader) + s*sizeof(SLOTID) ) ;
+               if ( DMS_SLOT_EMPTY == slotOffset )
+               {
+                  continue ;
+               }
+               bson = BSONObj ( data + k*DMS_PAGESIZE + 
+                                slotOffset + sizeof(dmsRecord) );
+               recordID._slotID = (SLOTID) s ;
+               rc = _ixmBucketMgr->isIDExist ( bson ) ;
+               PD_RC_CHECK ( rc, PDERROR, "Failed to call isIDExist, rc = %d",
+                             rc ) ;
+               rc = _ixmBucketMgr->createIndex( bson, recordID ) ;
+               PD_RC_CHECK ( rc, PDERROR, "Failed to call ixm createIndex, rc = %d",
+                             rc ) ;
+            }
          }
        } //for ( int i = 0; i < numSegments; ++i )
    }// if ( numSegments > 0 )
@@ -547,8 +546,6 @@ done :
 error :
    goto done ;
 }
-
-void Qsort(SLOTID  myArray[], SLOTID  min,SLOTID  max) ;
 
 void dmsFile::_recoverSpace ( char *page )
 {
@@ -559,82 +556,30 @@ void dmsFile::_recoverSpace ( char *page )
    bool isRecover            = false ;
    dmsRecord *recordHeader   = NULL ;   
    dmsPageHeader *pageHeader = NULL ;
-   SLOTOFF slotTemp           = 0 ;
+
    pLeft = page + sizeof(dmsPageHeader) ;
    pRight = page + DMS_PAGESIZE ;
 
    pageHeader = (dmsPageHeader *)page ;
-   
-   // the slots order by data space, from the page end 
-   SLOTID slotOrder[pageHeader->_numSlots] ;
-   
+   // recover space
    for ( unsigned int i = 0; i < pageHeader->_numSlots; ++i )
    {
-      slotOrder[i] = *(SLOTID*)( page + sizeof( dmsPageHeader ) +
-                                  i * sizeof(SLOTID) ) ;
-      if ( DMS_SLOT_EMPTY == slotOrder[i] )
+      slot = *(( SLOTOFF* )(pLeft + sizeof(SLOTOFF) * i ) ) ;
+      if ( DMS_SLOT_EMPTY != slot )
       {
-         slotTemp = pageHeader->_reuseSlotOffset ;
-         pageHeader->_reuseSlotOffset = slotOrder[i] ;
-         *(SLOTID*)( page + sizeof( dmsPageHeader ) +
-                                  i * sizeof(SLOTID) ) = slotTemp ;
-         slotOrder[i] = 0 ;
-      } else if ( pageHeader->_numSlots > slotOrder[i] ||
-                  DMS_REUSE_SLOT_EMPTY == slotOrder[i] )
-      {
-         slotOrder[i] = 0 ;
+         recordHeader = (dmsRecord *)(page + slot ) ;
+         recordSize = recordHeader->_size ;
+         pRight -= recordSize ;
+         if ( isRecover )
+         {
+            memmove ( pRight, page + slot, recordSize ) ;
+         }
       }
-       
-   }
-   Qsort( slotOrder, 0, pageHeader->_numSlots ) ;
-   // recover space
-   for ( unsigned int i =  pageHeader->_numSlots; i >=0 && slotOrder[i] > 0 ; --i )
-   {
-      slot = slotOrder[i] ;
-      recordHeader = (dmsRecord *)(page + slot ) ;
-      recordSize = recordHeader->_size ;
-      pRight -= recordSize ;
-      if ( isRecover )
-      {
-         memmove ( pRight, page + slot, recordSize ) ;
-      }
-      else if (  pRight - page - slot > 0 )
+      else
       {
          isRecover = true ;
       }
-      
    }
    pageHeader->_freeOffset = pRight - page ;
 
 }
-
-void Qsort(SLOTID  myArray[], SLOTID  min, SLOTID  max)
-{
-    SLOTID  pivot = myArray[(min + max) / 2];
-
-    SLOTID  left = min, right = max;
-
-    while (left < right) {
-        while (myArray[left] < pivot) {
-            left++;
-        }
-        while (myArray[right] > pivot) {
-            right--;
-        }
-
-        if (left <= right) {
-            SLOTID  temp = myArray[left];
-            myArray[left] = myArray[right];
-            myArray[right] = temp;
-            left++;
-            right--;
-        }
-    }
-
-    if (min < right) {
-        Qsort(myArray, min, right);
-    }
-    if (left < max) {
-        Qsort(myArray, left, max);
-    }
-} 

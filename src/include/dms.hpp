@@ -21,6 +21,7 @@
 #include "ossMmapFile.hpp"
 #include "bson.h"
 #include "dmsRecord.hpp"
+#include "ixmBucket.hpp"
 #include <vector>
 
 #define DMS_EXTEND_SIZE 65536
@@ -81,7 +82,7 @@ PAGE STRUCTURE
 #define DMS_PAGE_FLAG_NORMAL 0
 #define DMS_PAGE_FLAG_UNALLOC 1
 #define DMS_SLOT_EMPTY 0xFFFFFFFF
-#define DMS_REUSE_SLOT_EMPTY 0xFFFFFFFE
+
 struct dmsPageHeader
 {
    char          _eyeCatcher[DMS_PAGE_EYECATCHER_LEN] ;
@@ -91,7 +92,6 @@ struct dmsPageHeader
    unsigned int  _slotOffset ;
    unsigned int  _freeSpace ;
    unsigned int  _freeOffset ;
-   unsigned int  _reuseSlotOffset ;
    char          _data[0] ;
 } ;
 
@@ -111,8 +111,9 @@ private :
    ossSLatch           _mutex ;
    ossXLatch           _extendMutex ;
    char               *_pFileName ;
+   ixmBucketManager   *_ixmBucketMgr ;
 public :
-   dmsFile () ;
+   dmsFile ( ixmBucketManager   *ixmBucketMgr ) ;
    ~dmsFile () ;
    // initialize the dms file
    int initialize ( const char *pFileName ) ;

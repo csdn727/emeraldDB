@@ -25,12 +25,6 @@
 #define EDU_USER        0x02
 #define EDU_ALL         ( EDU_SYSTEM | EDU_USER )
 
-struct lat
-{
-   ossXLatch lat1 ;
-   ossXLatch lat2 ;
-   bool      odd  ;
-} ;
 
 class pmdEDUMgr
 {
@@ -49,18 +43,13 @@ private :
    bool _isQuiesced ;
    bool _isDestroyed ;
 public :
-   struct lat _lat ;
    pmdEDUMgr () :
    _EDUID(1),
    _isQuiesced(false),
    _isDestroyed(false)
    {
    }
-   struct lat * getLat ()
-   {
-      return &_lat ;
-   }
-   
+
    ~pmdEDUMgr ()
    {
       reset () ;

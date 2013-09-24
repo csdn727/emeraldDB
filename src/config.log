@@ -569,7 +569,7 @@ configure:5530: result: yes
 configure:5530: checking for pow
 configure:5530: gcc -o conftest    conftest.c  >&5
 conftest.c:58:6: warning: conflicting types for built-in function 'pow' [enabled by default]
-/tmp/cclltghx.o: In function `main':
+/tmp/ccs9cUAL.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `pow'
 collect2: ld returned 1 exit status
 configure:5530: $? = 1
