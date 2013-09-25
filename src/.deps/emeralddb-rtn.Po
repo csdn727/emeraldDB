@@ -889,7 +889,7 @@ emeralddb-rtn.o: rtn/rtn.cpp core.hpp /usr/include/unistd.h \
  ../boost/boost/scoped_array.hpp \
  ../boost/boost/smart_ptr/scoped_array.hpp \
  ../boost/boost/thread/future_error_code.hpp include/ossSocket.hpp \
- include/ossUtil.hpp include/rtn.hpp
+ include/ossUtil.hpp include/rtn.hpp include/monCB.hpp
 
 core.hpp:
 
@@ -3070,3 +3070,5 @@ include/ossSocket.hpp:
 include/ossUtil.hpp:
 
 include/rtn.hpp:
+
+include/monCB.hpp:

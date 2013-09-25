@@ -90,7 +90,7 @@ int pmdTcpListenerEntryPoint ( pmdEDUCB *cb, void *arg )
             PD_LOG ( PDEVENT, "Restarting socket to listen" ) ;
             break ;
          }
-
+         pmdGetKRCB()->getMonAppCB().increaseConnNum() ;
          // assign the socket to the arg
          void *pData = NULL ;
          *((int *) &pData) = s ;

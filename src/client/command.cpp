@@ -443,7 +443,8 @@ int SnapshotCommand::handleReply()
    printf( "insert times is %d\n", bsonData.getIntField("insertTimes") );
    printf( "del times is %d\n", bsonData.getIntField("delTimes") );
    printf( "query times is %d\n", bsonData.getIntField("queryTimes") );
-   printf( "server run time is %dm\n", bsonData.getIntField("serverRunTime") );
+   printf( "server run time is %ds\n", bsonData.getIntField("serverRunTime") );
+   printf( "connected client is %d\n", bsonData.getIntField("connNum") );
 
    return ret;
 }

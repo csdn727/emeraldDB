@@ -27,6 +27,7 @@ uname -v = #75-Ubuntu SMP Tue Jun 18 17:39:32 UTC 2013
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
 
+PATH: /home/sequoiadb/temp/jdk1.6.0_45/bin
 PATH: /usr/local/sbin
 PATH: /usr/local/bin
 PATH: /usr/sbin
@@ -569,7 +570,7 @@ configure:5530: result: yes
 configure:5530: checking for pow
 configure:5530: gcc -o conftest    conftest.c  >&5
 conftest.c:58:6: warning: conflicting types for built-in function 'pow' [enabled by default]
-/tmp/ccs9cUAL.o: In function `main':
+/tmp/cczyUUb6.o: In function `main':
 conftest.c:(.text+0xa): undefined reference to `pow'
 collect2: ld returned 1 exit status
 configure:5530: $? = 1

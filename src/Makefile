@@ -72,9 +72,9 @@ am_emeralddb_OBJECTS = emeralddb-pmdMain.$(OBJEXT) \
 	emeralddb-nonce.$(OBJEXT) emeralddb-ossSocket.$(OBJEXT) \
 	emeralddb-ossPrimitiveFileOp.$(OBJEXT) \
 	emeralddb-ossMmapFile.$(OBJEXT) emeralddb-ossHash.$(OBJEXT) \
-	emeralddb-pd.$(OBJEXT) emeralddb-msg.$(OBJEXT) \
-	emeralddb-dms.$(OBJEXT) emeralddb-rtn.$(OBJEXT) \
-	emeralddb-ixmBucket.$(OBJEXT)
+	emeralddb-monCB.$(OBJEXT) emeralddb-pd.$(OBJEXT) \
+	emeralddb-msg.$(OBJEXT) emeralddb-dms.$(OBJEXT) \
+	emeralddb-rtn.$(OBJEXT) emeralddb-ixmBucket.$(OBJEXT)
 emeralddb_OBJECTS = $(am_emeralddb_OBJECTS)
 emeralddb_DEPENDENCIES =
 emeralddb_LINK = $(CXXLD) $(emeralddb_CXXFLAGS) $(CXXFLAGS) \
@@ -212,7 +212,7 @@ emeralddb_SOURCES = \
    bson/src/bsonobj.cpp bson/src/util/json.cpp bson/src/oid.cpp \
    bson/src/lib/base64.cpp bson/src/lib/md5.cpp bson/src/lib/nonce.cpp \
    oss/ossSocket.cpp oss/ossPrimitiveFileOp.cpp oss/ossMmapFile.cpp  \
-   oss/ossHash.cpp \
+   oss/ossHash.cpp   mon/monCB.cpp\
    pd/pd.cpp msg/msg.cpp dms/dms.cpp rtn/rtn.cpp ixm/ixmBucket.cpp
 
 edb_SOURCES = \
@@ -351,6 +351,7 @@ include ./$(DEPDIR)/emeralddb-dms.Po
 include ./$(DEPDIR)/emeralddb-ixmBucket.Po
 include ./$(DEPDIR)/emeralddb-json.Po
 include ./$(DEPDIR)/emeralddb-md5.Po
+include ./$(DEPDIR)/emeralddb-monCB.Po
 include ./$(DEPDIR)/emeralddb-msg.Po
 include ./$(DEPDIR)/emeralddb-nonce.Po
 include ./$(DEPDIR)/emeralddb-oid.Po
@@ -801,6 +802,20 @@ emeralddb-ossHash.obj: oss/ossHash.cpp
 #	source='oss/ossHash.cpp' object='emeralddb-ossHash.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(emeralddb_CXXFLAGS) $(CXXFLAGS) -c -o emeralddb-ossHash.obj `if test -f 'oss/ossHash.cpp'; then $(CYGPATH_W) 'oss/ossHash.cpp'; else $(CYGPATH_W) '$(srcdir)/oss/ossHash.cpp'; fi`
+
+emeralddb-monCB.o: mon/monCB.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(emeralddb_CXXFLAGS) $(CXXFLAGS) -MT emeralddb-monCB.o -MD -MP -MF $(DEPDIR)/emeralddb-monCB.Tpo -c -o emeralddb-monCB.o `test -f 'mon/monCB.cpp' || echo '$(srcdir)/'`mon/monCB.cpp
+	$(am__mv) $(DEPDIR)/emeralddb-monCB.Tpo $(DEPDIR)/emeralddb-monCB.Po
+#	source='mon/monCB.cpp' object='emeralddb-monCB.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(emeralddb_CXXFLAGS) $(CXXFLAGS) -c -o emeralddb-monCB.o `test -f 'mon/monCB.cpp' || echo '$(srcdir)/'`mon/monCB.cpp
+
+emeralddb-monCB.obj: mon/monCB.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(emeralddb_CXXFLAGS) $(CXXFLAGS) -MT emeralddb-monCB.obj -MD -MP -MF $(DEPDIR)/emeralddb-monCB.Tpo -c -o emeralddb-monCB.obj `if test -f 'mon/monCB.cpp'; then $(CYGPATH_W) 'mon/monCB.cpp'; else $(CYGPATH_W) '$(srcdir)/mon/monCB.cpp'; fi`
+	$(am__mv) $(DEPDIR)/emeralddb-monCB.Tpo $(DEPDIR)/emeralddb-monCB.Po
+#	source='mon/monCB.cpp' object='emeralddb-monCB.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(emeralddb_CXXFLAGS) $(CXXFLAGS) -c -o emeralddb-monCB.obj `if test -f 'mon/monCB.cpp'; then $(CYGPATH_W) 'mon/monCB.cpp'; else $(CYGPATH_W) '$(srcdir)/mon/monCB.cpp'; fi`
 
 emeralddb-pd.o: pd/pd.cpp
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(emeralddb_CXXFLAGS) $(CXXFLAGS) -MT emeralddb-pd.o -MD -MP -MF $(DEPDIR)/emeralddb-pd.Tpo -c -o emeralddb-pd.o `test -f 'pd/pd.cpp' || echo '$(srcdir)/'`pd/pd.cpp

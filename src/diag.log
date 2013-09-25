@@ -1891,3 +1891,409 @@ File:pmd/pmdAgent.cpp
 Message:
 Error processing Agent request, rc=-2
 
+2013-09-25-19.20.10.718524               Level:EVENT
+PID:872                                  TID:873
+Function:pmdTcpListenerEntryPoint        Line:40
+File:pmd/pmdTcpListener.cpp
+Message:
+Listening on port_test 48127
+
+
+2013-09-25-19.27.27.427437               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:83
+File:pmd/pmdAgent.cpp
+Message:
+Insert: insertor: { _id: 126, hellow: "word" }
+
+2013-09-25-19.27.27.576086               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:125
+File:pmd/pmdAgent.cpp
+Message:
+Query condition: { _id: 126 }
+
+2013-09-25-19.27.27.577740               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:143
+File:pmd/pmdAgent.cpp
+Message:
+Delete condition: { _id: 126 }
+
+2013-09-25-19.27.27.579888               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:174
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-19.43.45.372577               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:83
+File:pmd/pmdAgent.cpp
+Message:
+Insert: insertor: { _id: 99, next: "world" }
+
+2013-09-25-19.43.45.375019               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:125
+File:pmd/pmdAgent.cpp
+Message:
+Query condition: { _id: 99 }
+
+2013-09-25-19.43.45.376953               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:143
+File:pmd/pmdAgent.cpp
+Message:
+Delete condition: { _id: 99 }
+
+2013-09-25-19.43.45.378516               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:174
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-19.44.19.640146               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:83
+File:pmd/pmdAgent.cpp
+Message:
+Insert: insertor: { _id: 99, next: "world" }
+
+2013-09-25-19.45.42.720528               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:125
+File:pmd/pmdAgent.cpp
+Message:
+Query condition: { _id: 99 }
+
+2013-09-25-20.12.34.888086               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:143
+File:pmd/pmdAgent.cpp
+Message:
+Delete condition: { _id: 99 }
+
+2013-09-25-20.12.34.890393               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:174
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-20.12.45.574159               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:83
+File:pmd/pmdAgent.cpp
+Message:
+Insert: insertor: { _id: 99, next: "world" }
+
+2013-09-25-20.12.51.336434               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:125
+File:pmd/pmdAgent.cpp
+Message:
+Query condition: { _id: 99 }
+
+2013-09-25-20.12.55.662676               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:143
+File:pmd/pmdAgent.cpp
+Message:
+Delete condition: { _id: 99 }
+
+2013-09-25-20.12.55.664508               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:174
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-20.16.55.076863               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:83
+File:pmd/pmdAgent.cpp
+Message:
+Insert: insertor: { _id: 99, next: "world" }
+
+2013-09-25-20.16.55.078675               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:125
+File:pmd/pmdAgent.cpp
+Message:
+Query condition: { _id: 99 }
+
+2013-09-25-20.16.55.095216               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:143
+File:pmd/pmdAgent.cpp
+Message:
+Delete condition: { _id: 99 }
+
+2013-09-25-20.16.55.097632               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:174
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-20.18.44.123271               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:83
+File:pmd/pmdAgent.cpp
+Message:
+Insert: insertor: { _id: 99, next: "world" }
+
+2013-09-25-20.18.44.125881               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:125
+File:pmd/pmdAgent.cpp
+Message:
+Query condition: { _id: 99 }
+
+2013-09-25-20.18.44.140870               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:143
+File:pmd/pmdAgent.cpp
+Message:
+Delete condition: { _id: 99 }
+
+2013-09-25-20.18.44.142158               Level:EVENT
+PID:872                                  TID:874
+Function:pmdProcessAgentRequest          Line:174
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-20.30.18.659153               Level:EVENT
+PID:872                                  TID:874
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 2 is forced
+
+2013-09-25-22.02.49.097884               Level:EVENT
+PID:9359                                 TID:9360
+Function:pmdTcpListenerEntryPoint        Line:40
+File:pmd/pmdTcpListener.cpp
+Message:
+Listening on port_test 48127
+
+
+2013-09-25-22.05.53.128168               Level:EVENT
+PID:9359                                 TID:9364
+Function:pmdProcessAgentRequest          Line:190
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-22.12.33.849505               Level:WARNING
+PID:9359                                 TID:9363
+Function:recv                            Line:347
+File:oss/ossSocket.cpp
+Message:
+Peer unexpected shutdown
+
+2013-09-25-22.12.35.850143               Level:EVENT
+PID:9359                                 TID:9363
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 2 is forced
+
+2013-09-25-22.12.36.443137               Level:EVENT
+PID:9359                                 TID:9364
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 3 is forced
+
+2013-09-25-22.12.43.566509               Level:EVENT
+PID:10775                                TID:10776
+Function:pmdTcpListenerEntryPoint        Line:40
+File:pmd/pmdTcpListener.cpp
+Message:
+Listening on port_test 48127
+
+
+2013-09-25-22.13.55.478134               Level:EVENT
+PID:10775                                TID:10780
+Function:pmdProcessAgentRequest          Line:190
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-22.13.59.430358               Level:EVENT
+PID:10775                                TID:10778
+Function:pmdProcessAgentRequest          Line:190
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-22.14.01.431857               Level:EVENT
+PID:10775                                TID:10778
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 2 is forced
+
+2013-09-25-22.14.01.481824               Level:EVENT
+PID:10775                                TID:10780
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 3 is forced
+
+2013-09-25-23.28.14.234000               Level:EVENT
+PID:14206                                TID:14207
+Function:pmdTcpListenerEntryPoint        Line:40
+File:pmd/pmdTcpListener.cpp
+Message:
+Listening on port_test 48127
+
+
+2013-09-25-23.28.57.822381               Level:EVENT
+PID:14206                                TID:14209
+Function:pmdProcessAgentRequest          Line:191
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-23.29.14.045716               Level:EVENT
+PID:14206                                TID:14208
+Function:pmdProcessAgentRequest          Line:191
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-23.29.30.284745               Level:WARNING
+PID:14206                                TID:14208
+Function:recv                            Line:347
+File:oss/ossSocket.cpp
+Message:
+Peer unexpected shutdown
+
+2013-09-25-23.29.32.287201               Level:EVENT
+PID:14206                                TID:14208
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 2 is forced
+
+2013-09-25-23.29.32.851075               Level:EVENT
+PID:14206                                TID:14209
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 3 is forced
+
+2013-09-25-23.45.26.001323               Level:EVENT
+PID:17216                                TID:17217
+Function:pmdTcpListenerEntryPoint        Line:40
+File:pmd/pmdTcpListener.cpp
+Message:
+Listening on port_test 48127
+
+
+2013-09-25-23.48.37.097813               Level:EVENT
+PID:18542                                TID:18543
+Function:pmdTcpListenerEntryPoint        Line:40
+File:pmd/pmdTcpListener.cpp
+Message:
+Listening on port_test 48127
+
+
+2013-09-25-23.50.11.677602               Level:EVENT
+PID:18542                                TID:18545
+Function:pmdProcessAgentRequest          Line:83
+File:pmd/pmdAgent.cpp
+Message:
+Insert: insertor: { _id: 3, dfa: "hahaha" }
+
+2013-09-25-23.50.24.781898               Level:EVENT
+PID:18542                                TID:18545
+Function:pmdProcessAgentRequest          Line:130
+File:pmd/pmdAgent.cpp
+Message:
+Query condition: { _id: 3 }
+
+2013-09-25-23.50.37.372685               Level:EVENT
+PID:18542                                TID:18545
+Function:pmdProcessAgentRequest          Line:153
+File:pmd/pmdAgent.cpp
+Message:
+Delete condition: { _id: 3 }
+
+2013-09-25-23.51.38.730788               Level:EVENT
+PID:18542                                TID:18545
+Function:pmdProcessAgentRequest          Line:190
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-23.52.59.320202               Level:WARNING
+PID:18542                                TID:18544
+Function:recv                            Line:347
+File:oss/ossSocket.cpp
+Message:
+Peer unexpected shutdown
+
+2013-09-25-23.53.01.322545               Level:EVENT
+PID:18542                                TID:18544
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 2 is forced
+
+2013-09-25-23.53.01.787501               Level:EVENT
+PID:18542                                TID:18545
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 3 is forced
+
+2013-09-25-23.55.35.434336               Level:EVENT
+PID:19912                                TID:19913
+Function:pmdTcpListenerEntryPoint        Line:40
+File:pmd/pmdTcpListener.cpp
+Message:
+Listening on port_test 48127
+
+
+2013-09-25-23.56.29.120163               Level:EVENT
+PID:19912                                TID:19914
+Function:pmdProcessAgentRequest          Line:83
+File:pmd/pmdAgent.cpp
+Message:
+Insert: insertor: { _id: "223a", hoole: "wwii" }
+
+2013-09-25-23.56.42.480896               Level:EVENT
+PID:19912                                TID:19914
+Function:pmdProcessAgentRequest          Line:130
+File:pmd/pmdAgent.cpp
+Message:
+Query condition: { _id: "223a" }
+
+2013-09-25-23.56.56.927842               Level:EVENT
+PID:19912                                TID:19914
+Function:pmdProcessAgentRequest          Line:153
+File:pmd/pmdAgent.cpp
+Message:
+Delete condition: { _id: "223a" }
+
+2013-09-25-23.57.00.894580               Level:EVENT
+PID:19912                                TID:19914
+Function:pmdProcessAgentRequest          Line:190
+File:pmd/pmdAgent.cpp
+Message:
+Receive disconnect msg
+
+2013-09-25-23.59.17.005799               Level:EVENT
+PID:19912                                TID:19914
+Function:pmdEDUEntryPoint                Line:174
+File:pmd/pmdEDU.cpp
+Message:
+EDU 2 is forced
+

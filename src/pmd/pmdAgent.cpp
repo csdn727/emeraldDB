@@ -96,6 +96,11 @@ static int pmdProcessAgentRequest ( char *pReceiveBuffer,
             }
             // insert record
             rc = rtnMgr->rtnInsert ( insertor ) ;
+            if ( !rc )
+            {
+               krcb->getMonAppCB().increaseInsertTimes() ;
+            }
+
          }
          catch ( std::exception &e )
          {
@@ -124,6 +129,11 @@ static int pmdProcessAgentRequest ( char *pReceiveBuffer,
                   "Query condition: %s",
                   recordID.toString().c_str() ) ;
          rc = rtnMgr->rtnFind ( recordID, retObj ) ;
+         if ( !rc )
+         {
+            krcb->getMonAppCB().increaseQueryTimes() ;
+         }
+
       }
       else if ( OP_DELETE == opCode )
       {
@@ -142,18 +152,24 @@ static int pmdProcessAgentRequest ( char *pReceiveBuffer,
                   "Delete condition: %s",
                   recordID.toString().c_str() ) ;
          rc = rtnMgr->rtnRemove ( recordID ) ;
+         if ( !rc )
+         {
+            krcb->getMonAppCB().increaseDelTimes() ;
+         } 
       }
       else if ( OP_SNAPSHOT == opCode )
       {
          PD_LOG ( PDDEBUG,
                   "Snapshot request received" ) ;
+         MonAppCB monAppCB = krcb->getMonAppCB () ;
          try
          {
             BSONObjBuilder b ;
-            b.append ( "insertTimes", 100 ) ;
-            b.append ( "delTimes", 1000 ) ;
-            b.append ( "queryTimes", 2000 ) ;
-            b.append ( "serverRunTime", 100 ) ;
+            b.append ( "insertTimes", monAppCB.getInsertTimes() ) ;
+            b.append ( "delTimes", monAppCB.getDelTimes() ) ;
+            b.append ( "queryTimes", monAppCB.getQueryTimes() ) ;
+            b.append ( "serverRunTime", monAppCB.getServerRunTime() ) ;
+            b.append ( "connNum", monAppCB.getConnNum() ) ;
             retObj = b.obj () ;
          }
          catch ( std::exception &e )
@@ -172,6 +188,7 @@ static int pmdProcessAgentRequest ( char *pReceiveBuffer,
       else if ( OP_DISCONNECT == opCode )
       {
          PD_LOG ( PDEVENT, "Receive disconnect msg" ) ;
+         krcb->getMonAppCB().decreaseConnNum() ;
          *disconnect = true ;
       }
       else
